@@ -51,7 +51,7 @@ class DAO():
         cursor.execute(query, (year, year))
         # cursor.fetchall() mi crea una
         for row in cursor:
-            result.append((row[0], row[1]))
+            result.append((row["state1no"], row["state2no"]))
         cursor.close()
         conn.close()
         return result

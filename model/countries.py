@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-def Country():
+class Country():
     StateAbb: str
     CCode: int
     StateNme : str
