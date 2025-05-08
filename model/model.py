@@ -11,6 +11,7 @@ class Model:
         self._edges = None
         self._idMap = {}
         self._year = 0
+        self._mapDD = {}
 
     def setYear(self, e):
         self._year = e
