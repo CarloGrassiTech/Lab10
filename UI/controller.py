@@ -70,14 +70,18 @@ class Controller:
 
             #come calcolo i nodi raggiungibili
             #nodi_raggiungibili = self.getNodiRaggiungibiliNX(self._model._mapDD[self._view._ddNodes.value])
-            self.getNodiRaggiungibiliRicorsione(nodes(self._model._grafo), self._model._mapDD[self._view._ddNodes.value])
-            nodi_raggiungibili = self._res.copy()
+            self.getNodiRaggiungibiliRicorsione(nodi_rim =self._model._nodes, parziale = [self._model._mapDD[self._view._ddNodes.value]])
             #nodi_raggiungibili = self.getNodiRaggiungibiliIterazione(self._model._mapDD[self._view._ddNodes.value])
 
 
             self._view._txt_result.controls.append(ft.Text("il nodo ha i seguenti nodi raggiungibili:"))
-            for v in nodi_raggiungibili:
-                self._view._txt_result.controls.append(ft.Text(f"{str(v)}"))
+            #for nodo, successori in nodi_raggiungibili:
+            #    self._view._txt_result.controls.append(
+            #        ft.Text(f"Dal nodo {nodo} si raggiungono: {', '.join(map(str, successori))}"))
+            #self._view.update_page()
+            for nodo in self._res:
+                self._view._txt_result.controls.append(
+                    ft.Text(str(nodo)))
             self._view.update_page()
         else:
             self._view._txt_result.controls.clear()
@@ -92,16 +96,20 @@ class Controller:
         return res
 
     def getNodiRaggiungibiliRicorsione(self, nodi_rim, parziale):
-        #ricorsione provando ogni volta ad aggiungere un nodo dei rimanenti che sia collegabile all'ultimo nodo in parziale
-        if len(nodi_rim) == 0:
-            self._res.extend(parziale)
-            return
-        else:
-            for v in nodi_rim:
-                if v in neighbors(self._model._grafo, parziale[-1]):
-                    parziale.append(v)
-                    self.getNodiRaggiungibiliRicorsione( nodi_rim, parziale)
-            parziale.pop()
+        estensione_possibile = False
+        for v in list(nodi_rim):
+            if v in neighbors(self._model._grafo, parziale[-1]):
+                estensione_possibile = True
+                parziale.append(v)
+                nuovi_rim = list(nodi_rim)
+                nuovi_rim.remove(v)
+                self.getNodiRaggiungibiliRicorsione(nuovi_rim, parziale)
+                parziale.pop()
+
+        if not estensione_possibile:
+            # Nessun nodo collegabile → fine percorso valido
+            self._res.append(list(parziale))
+
 
 
     def getNodiRaggiungibiliIterazione(self, source):
